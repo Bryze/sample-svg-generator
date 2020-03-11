@@ -1,81 +1,162 @@
-import React from "react";
+import React, { useEffect, useState, useRef } from "react";
+import Steps from "./steps";
 import "./styles.css";
 import {
-  moveVertical,
-  moveLeft,
-  moveRight,
-  turnBottomLeft,
-  turnBottomRight,
-  turnTopLeft,
-  turnTopRight
-} from "./svg-base";
+  ACTION_TYPES
+} from "./selectors";
 
-const MENU_ITEMS = [1, 2, 3, 4];
+const SAMPLE_ITEMS = [
+  {
+    className: "first"
+  },
+  {
+    className: "second"
+  },
+  {
+    className: "third"
+  },
+  {
+    className: "fourth"
+  }
+];
 
-const HEIGHT = 190;
 const RADIUS_X = 10;
 const RADIUS_Y = 10;
 
-const LEFT_MARGIN = 160;
-
-const BASIC_PATH_CONFIG = {
-  rx: RADIUS_X,
-  ry: RADIUS_Y,
-  distance: LEFT_MARGIN,
-  height: HEIGHT
-};
-
-const FUNCTION_MAP = {
-  moveVertical: moveVertical,
-  moveLeft: moveLeft,
-  moveRight: moveRight,
-  turnBottomRight: turnBottomRight,
-  turnBottomLeft: turnBottomLeft,
-  turnTopLeft: turnTopLeft,
-  turnTopRight: turnTopRight
-};
-
 const MOVEMENT_CONFIG = {
-  dimensions: BASIC_PATH_CONFIG,
   operations: [
-    "moveVertical",
-    "turnBottomRight",
-    "moveLeft",
-    "turnTopLeft",
-    "moveVertical",
-    "turnBottomLeft",
-    "moveRight",
-    "turnTopRight",
-    "moveVertical",
-    "turnBottomRight",
-    "moveLeft",
-    "turnTopLeft",
-    "moveVertical"
+    {
+      action: ACTION_TYPES.MOVE_VERTICAL,
+      heightIndex: 0,
+      dimensions: {
+        height: (length) => length - RADIUS_Y 
+      }
+    },
+    {
+      action: ACTION_TYPES.TURN_BOTTOM_RIGHT,
+      dimensions: {
+        rx: RADIUS_X,
+        ry: RADIUS_Y
+      }
+    },
+    {
+      action: ACTION_TYPES.MOVE_LEFT,
+      dimensions: {
+        rx: RADIUS_X + 10,
+        ry: RADIUS_Y + 10
+      }
+    },
+    {
+      action: ACTION_TYPES.TURN_TOP_LEFT,
+      dimensions: {
+        rx: RADIUS_X,
+        ry: RADIUS_Y
+      }
+    },
+    {
+      action: ACTION_TYPES.MOVE_VERTICAL,
+      heightIndex: 1,
+      dimensions: {
+        height: (length) => length - (RADIUS_Y*2) 
+      }
+    },
+    {
+      action: ACTION_TYPES.TURN_BOTTOM_LEFT,
+      dimensions: {
+        rx: RADIUS_X,
+        ry: RADIUS_Y
+      }
+    },
+    {
+      action: ACTION_TYPES.MOVE_RIGHT,
+      dimensions: {
+        rx: RADIUS_X + 10,
+        ry: RADIUS_Y + 10
+      }
+    },
+    {
+      action: ACTION_TYPES.TURN_TOP_RIGHT,
+      dimensions: {
+        rx: RADIUS_X,
+        ry: RADIUS_Y
+      }
+    },
+    {
+      action: ACTION_TYPES.MOVE_VERTICAL,
+      heightIndex: 2,
+      dimensions: {
+        height: (length) => length - (RADIUS_Y*2) 
+      }
+    },
+    {
+      action: ACTION_TYPES.TURN_BOTTOM_RIGHT,
+      dimensions: {
+        rx: RADIUS_X,
+        ry: RADIUS_Y
+      }
+    },
+    {
+      action: ACTION_TYPES.MOVE_LEFT,
+      dimensions: {
+        rx: RADIUS_X + 10,
+        ry: RADIUS_Y + 10
+      }
+    },
+    {
+      action: ACTION_TYPES.TURN_TOP_LEFT,
+      dimensions: {
+        rx: RADIUS_X,
+        ry: RADIUS_Y
+      }
+    },
+    {
+      action: ACTION_TYPES.MOVE_VERTICAL,
+      heightIndex: 3,
+      dimensions: {
+        height: (length) => length - (RADIUS_Y) 
+      }
+    }
   ]
 };
 
-const computePath = () => {
-  let path = "M 160 0";
-  MOVEMENT_CONFIG.operations.forEach(keyword => {
-    let funcRef = FUNCTION_MAP[keyword];
-    const computedPath = funcRef(MOVEMENT_CONFIG.dimensions);
-    path = `${path} ${computedPath}`;
-  });
-  return path;
-};
-
 export default function App() {
+
+  const containerRef = useRef();
+  const loopRef = useRef({});
+  const [attributes, setAttributes] = useState(null);
+
+  useEffect(() => {
+    const elementHeights = Object.values(loopRef.current).map((item) => {
+      return item.clientHeight;
+    })
+    setAttributes({
+      width: containerRef.current.clientWidth,
+      height: containerRef.current.clientHeight,
+      elementHeights
+    })
+  }, [])
+
   return (
-    <div className="App">
-      <svg height="900">
-        <path
-          fill="none"
-          stroke="rgba(0,0,0)"
-          strokeWidth="1.2"
-          //a rx ry x-axis-rotation large-arc-flag sweep-flag dx dy
-          d={computePath()}
-        />
-      </svg>
+    <div ref={containerRef} className={"container"}>
+      {
+        SAMPLE_ITEMS.map((item, index) => (
+          <div
+            key={index}
+            className={item.className}
+            ref={node => loopRef.current[index] = node} />
+        ))
+      }
+      {
+        attributes &&
+        <div className={"svgContainer"}>
+          <Steps
+            movementConfig={MOVEMENT_CONFIG}
+            attributes={attributes}
+            overrides={{
+              height: true
+            }} />
+        </div>
+      }
     </div>
   );
 }

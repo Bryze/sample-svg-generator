@@ -1,4 +1,24 @@
-.App {
-  font-family: sans-serif;
-  text-align: center;
+.container {
+  background: #ccc;
+  position: relative;
+}
+.first {
+  background: #cca;
+  height: 180px;
+}
+.second {
+  background: #bbb;
+  height: 250px;
+}
+.third {
+  background: #ddd;
+  height: 250px;
+}
+.fourth {
+  background: #eee;
+  height: 100px;
+}
+.svgContainer {
+  position: absolute;
+  top: 0
 }
