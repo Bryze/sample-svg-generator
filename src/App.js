@@ -137,7 +137,11 @@ export default function App() {
   }, [])
 
   return (
-    <div ref={containerRef} className={"container"}>
+   <React.Fragment>
+     <div className="second" />
+     <div className="second" />
+     <div className="second" />
+      <div ref={containerRef} className={"container"}>
       {
         SAMPLE_ITEMS.map((item, index) => (
           <div
@@ -158,5 +162,9 @@ export default function App() {
         </div>
       }
     </div>
+
+    <div className="second" />
+    <div className="second" />
+   </React.Fragment>
   );
 }

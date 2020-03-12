@@ -3,6 +3,7 @@ import "./styles.css";
 import {
   computePath
 } from "./selectors";
+import { useInView } from "react-intersection-observer";
 
 export default function Steps({
   attributes,
@@ -13,6 +14,7 @@ export default function Steps({
   const svgPath = useRef();
   const svgRef = useRef();
   const [pathLength, setPathLength] = useState(0);
+  const [containerRef, inView, entry] = useInView({});
 
   useEffect(() => {
     if (svgPath.current) {
@@ -48,7 +50,7 @@ export default function Steps({
   }, [pathLength]);
 
   useEffect(() => {
-    if (pathLength) {
+    if (inView) {
       window.addEventListener("scroll", onScroll);
       return () => {
         window.removeEventListener("scroll", onScroll);
@@ -58,10 +60,11 @@ export default function Steps({
       window.removeEventListener("scroll", onScroll);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [pathLength]);
+  }, [inView]);
 
   return (
-    <svg
+    <div ref={containerRef}>
+      <svg
       ref={svgRef}
       height={attributes.height}>
       <path
@@ -90,5 +93,6 @@ export default function Steps({
         }
       />
     </svg>
+    </div>
   );
 }
