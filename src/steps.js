@@ -15,6 +15,7 @@ export default function Steps({
   const svgRef = useRef();
   const [pathLength, setPathLength] = useState(0);
   const [containerRef, inView, entry] = useInView({});
+  const [coloredPathLength, setColoredPathLength] = useState(0);
 
   useEffect(() => {
     if (svgPath.current) {
@@ -26,26 +27,21 @@ export default function Steps({
     if (!svgPath.current) {
       return;
     }
-    // What % down is it?
-    // https://stackoverflow.com/questions/2387136/cross-browser-method-to-determine-vertical-scroll-percentage-in-javascript/2387222#2387222
-    // Had to try three or four differnet methods here. Kind of a cross-browser nightmare.
-    const scrollPercentage =
-      (document.documentElement.scrollTop + document.body.scrollTop) /
-      (document.documentElement.scrollHeight -
-        document.documentElement.clientHeight);
-    const { y, height, top } = svgRef.current.getBoundingClientRect();
-    // Length to offset the dashes
-    const drawLength = pathLength * scrollPercentage;
-    // Draw in reverse
-    svgPath.current.style.strokeDashoffset = pathLength - drawLength;
 
-    // When complete, remove the dash array, otherwise shape isn't quite sharp
-    // Accounts for fuzzy math
-    if (scrollPercentage >= 0.99) {
-      svgPath.current.style.strokeDasharray = "none";
-    } else {
-      svgPath.current.style.strokeDasharray = `${pathLength} ${pathLength}`;
+    const { y, height } = svgRef.current.getBoundingClientRect();
+
+    // Length to offset the dashes
+    const svgScrollPercentage = (window.innerHeight - y) / height;
+
+    const drawLength = pathLength * svgScrollPercentage - (window.innerHeight / 2);
+    
+    if(drawLength>-1) {
+      setColoredPathLength(drawLength);
     }
+
+    svgPath.current.style.strokeDashoffset = pathLength - drawLength;
+    svgPath.current.style.strokeDasharray = `${pathLength} ${pathLength}`;
+
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [pathLength]);
 
@@ -65,34 +61,58 @@ export default function Steps({
   return (
     <div ref={containerRef}>
       <svg
-      ref={svgRef}
-      height={attributes.height}>
-      <path
-        fill="none"
-        stroke="rgba(0,0,0)"
-        strokeWidth="1.2"
-        d={
-          computePath({
-            attributes,
-            overrides,
-            movementConfig
-          })
-        }
-      />
-      <path
-        ref={svgPath}
-        fill="none"
-        stroke="red"
-        strokeWidth="1.2"
-        d={
-          computePath({
-            attributes,
-            overrides,
-            movementConfig
-          })
-        }
-      />
-    </svg>
+        ref={svgRef}
+        width={attributes.width}
+        height={attributes.height}>
+        <g fill="white" stroke="black" strokeWidth="1">
+          {
+            movementConfig.operations.map((item, index) => {
+              if (item.dot) {
+                let fill = "none";
+                if(item.dot.threshold(coloredPathLength)) {
+                  fill = "red"
+                }
+                return (
+                  <circle
+                    key={index}
+                    fill={fill}
+                    cx={item.dot.xCoordinate(attributes.width)}
+                    cy={item.dot.yCoordinate()}
+                    r={item.dot.radius}
+                    />
+                );
+              } else {
+                return null;
+              }
+            })
+          }
+        </g>
+        <path
+          fill="none"
+          stroke="rgba(0,0,0)"
+          strokeWidth="1.2"
+          d={
+            computePath({
+              attributes,
+              overrides,
+              movementConfig
+            })
+          }
+        />
+        <path
+          ref={svgPath}
+          fill="none"
+          stroke="red"
+          strokeWidth="1.2"
+          d={
+            computePath({
+              attributes,
+              overrides,
+              movementConfig
+            })
+          }
+        />
+      </svg>
     </div>
   );
 }

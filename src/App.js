@@ -29,7 +29,13 @@ const MOVEMENT_CONFIG = {
       action: ACTION_TYPES.MOVE_VERTICAL,
       heightIndex: 0,
       dimensions: {
-        height: (length) => length - RADIUS_Y 
+        height: (length) => length - RADIUS_Y
+      },
+      dot: {
+        xCoordinate: (width) => width / 2,
+        yCoordinate: () => 20,
+        radius: 5,
+        threshold: (path) => 16 < path && path < 341
       }
     },
     {
@@ -57,7 +63,13 @@ const MOVEMENT_CONFIG = {
       action: ACTION_TYPES.MOVE_VERTICAL,
       heightIndex: 1,
       dimensions: {
-        height: (length) => length - (RADIUS_Y*2) 
+        height: (length) => length - (RADIUS_Y * 2)
+      },
+      dot: {
+        xCoordinate: () => (RADIUS_X * 2) + 1,
+        yCoordinate: () => 220,
+        radius: 5,
+        threshold: (path) => 341 < path && path < 713
       }
     },
     {
@@ -85,7 +97,13 @@ const MOVEMENT_CONFIG = {
       action: ACTION_TYPES.MOVE_VERTICAL,
       heightIndex: 2,
       dimensions: {
-        height: (length) => length - (RADIUS_Y*2) 
+        height: (length) => length - (RADIUS_Y * 2)
+      },
+      dot: {
+        xCoordinate: (width) => width / 2,
+        yCoordinate: () => 470,
+        radius: 5,
+        threshold: (path) => 713 < path && path < 1067
       }
     },
     {
@@ -113,7 +131,13 @@ const MOVEMENT_CONFIG = {
       action: ACTION_TYPES.MOVE_VERTICAL,
       heightIndex: 3,
       dimensions: {
-        height: (length) => length - (RADIUS_Y) 
+        height: (length) => length - (RADIUS_Y)
+      },
+      dot: {
+        xCoordinate: () => (RADIUS_X * 2) + 1,
+        yCoordinate: () => 700,
+        radius: 5,
+        threshold: (path) => 1067 < path
       }
     }
   ]
@@ -137,34 +161,34 @@ export default function App() {
   }, [])
 
   return (
-   <React.Fragment>
-     <div className="second" />
-     <div className="second" />
-     <div className="second" />
+    <React.Fragment>
+      <div className="second" />
+      <div className="second" />
+      <div className="second" />
       <div ref={containerRef} className={"container"}>
-      {
-        SAMPLE_ITEMS.map((item, index) => (
-          <div
-            key={index}
-            className={item.className}
-            ref={node => loopRef.current[index] = node} />
-        ))
-      }
-      {
-        attributes &&
-        <div className={"svgContainer"}>
-          <Steps
-            movementConfig={MOVEMENT_CONFIG}
-            attributes={attributes}
-            overrides={{
-              height: true
-            }} />
-        </div>
-      }
-    </div>
+        {
+          SAMPLE_ITEMS.map((item, index) => (
+            <div
+              key={index}
+              className={item.className}
+              ref={node => loopRef.current[index] = node} />
+          ))
+        }
+        {
+          attributes &&
+          <div className={"svgContainer"}>
+            <Steps
+              movementConfig={MOVEMENT_CONFIG}
+              attributes={attributes}
+              overrides={{
+                height: true
+              }} />
+          </div>
+        }
+      </div>
 
-    <div className="second" />
-    <div className="second" />
-   </React.Fragment>
+      <div className="second" />
+      <div className="second" />
+    </React.Fragment>
   );
 }
