@@ -23,6 +23,20 @@ const SAMPLE_ITEMS = [
 const RADIUS_X = 10;
 const RADIUS_Y = 10;
 
+const getDotIndexWhenThresholdReached = (distance) => {
+  let index = null;
+  if (16 < distance && distance < 365) {
+    index = 0;
+  } else if (365 < distance && distance < 770) {
+    index = 1;
+  } else if (770 < distance && distance < 1155) {
+    index = 2;
+  } else if (1155 < distance) {
+    index = 3;
+  }
+  return index;
+}
+
 const MOVEMENT_CONFIG = {
   operations: [
     {
@@ -31,11 +45,17 @@ const MOVEMENT_CONFIG = {
       dimensions: {
         height: (length) => length - RADIUS_Y
       },
+      dotIndex: 0,
       dot: {
         xCoordinate: (width) => width / 2,
         yCoordinate: () => 20,
         radius: 5,
-        threshold: (path) => 16 < path && path < 341
+        generateDefaultDotUsingAttributes: ({ width }) => (
+          <circle className={"marker0"}
+            cx={width / 2}
+            cy={20}
+            r={5} />
+        )
       }
     },
     {
@@ -65,11 +85,17 @@ const MOVEMENT_CONFIG = {
       dimensions: {
         height: (length) => length - (RADIUS_Y * 2)
       },
+      dotIndex: 1,
       dot: {
         xCoordinate: () => (RADIUS_X * 2) + 1,
         yCoordinate: () => 220,
         radius: 5,
-        threshold: (path) => 341 < path && path < 713
+        generateDefaultDotUsingAttributes: () => (
+          <circle className={"marker0"}
+            cx={(RADIUS_X * 2) + 1}
+            cy={220}
+            r={5} />
+        )
       }
     },
     {
@@ -99,11 +125,17 @@ const MOVEMENT_CONFIG = {
       dimensions: {
         height: (length) => length - (RADIUS_Y * 2)
       },
+      dotIndex: 2,
       dot: {
         xCoordinate: (width) => width / 2,
         yCoordinate: () => 470,
         radius: 5,
-        threshold: (path) => 713 < path && path < 1067
+        generateDefaultDotUsingAttributes: ({ width }) => (
+          <circle className={"marker0"}
+            cx={width / 2}
+            cy={470}
+            r={5} />
+        )
       }
     },
     {
@@ -133,11 +165,17 @@ const MOVEMENT_CONFIG = {
       dimensions: {
         height: (length) => length - (RADIUS_Y)
       },
+      dotIndex: 3,
       dot: {
         xCoordinate: () => (RADIUS_X * 2) + 1,
         yCoordinate: () => 700,
         radius: 5,
-        threshold: (path) => 1067 < path
+        generateDefaultDotUsingAttributes: () => (
+          <circle className={"marker0"}
+            cx={(RADIUS_X * 2) + 1}
+            cy={700}
+            r={5} />
+        )
       }
     }
   ]
@@ -156,7 +194,8 @@ export default function App() {
     setAttributes({
       width: containerRef.current.clientWidth,
       height: containerRef.current.clientHeight,
-      elementHeights
+      elementHeights,
+      offset: window.innerHeight / 2
     })
   }, [])
 
@@ -182,7 +221,8 @@ export default function App() {
               attributes={attributes}
               overrides={{
                 height: true
-              }} />
+              }}
+              getDotIndexWhenThresholdReached={getDotIndexWhenThresholdReached} />
           </div>
         }
       </div>

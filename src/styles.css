@@ -22,3 +22,13 @@
   position: absolute;
   top: 0
 }
+.marker0 {
+  fill: #ed6c0d;
+  stroke: #fff;
+  stroke-width: 4;
+  cursor: pointer;
+  /* -webkit-box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.08);
+  box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.08);  */
+  -webkit-filter: drop-shadow(0 10px 10px 0 rgba(0, 0, 0, 0.2));      
+  filter: drop-shadow(0 10px 10px 0 rgba(0, 0, 0, 0.2))
+}

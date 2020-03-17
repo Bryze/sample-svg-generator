@@ -1,21 +1,32 @@
-import React, { useRef, useState, useEffect, useCallback } from "react";
+import React, { useRef, useState, useEffect, useCallback, Fragment } from "react";
 import "./styles.css";
 import {
   computePath
 } from "./selectors";
 import { useInView } from "react-intersection-observer";
 
+const resetDots = ({ config, ref, activeIndex }) => {
+  const totalDots = config.filter((item) => !!item.dot).length;
+  for (let i = 0; i < totalDots; i++) {
+    if ((i !== activeIndex && activeIndex !== null) || (activeIndex === null)) {
+      ref.current[i].style.display = "none";
+      ref.current[`c-${i}`].style.display = "none";
+    }
+  }
+}
+
 export default function Steps({
   attributes,
   movementConfig = {},
-  overrides = {}
+  overrides = {},
+  getDotIndexWhenThresholdReached = () => { }
 }) {
 
   const svgPath = useRef();
   const svgRef = useRef();
+  const dotRef = useRef({});
   const [pathLength, setPathLength] = useState(0);
-  const [containerRef, inView, entry] = useInView({});
-  const [coloredPathLength, setColoredPathLength] = useState(0);
+  const [containerRef, inView] = useInView({});
 
   useEffect(() => {
     if (svgPath.current) {
@@ -33,10 +44,13 @@ export default function Steps({
     // Length to offset the dashes
     const svgScrollPercentage = (window.innerHeight - y) / height;
 
-    const drawLength = pathLength * svgScrollPercentage - (window.innerHeight / 2);
-    
-    if(drawLength>-1) {
-      setColoredPathLength(drawLength);
+    const drawLength = pathLength * svgScrollPercentage - attributes.offset;
+    const dotIndex = getDotIndexWhenThresholdReached(drawLength);
+    resetDots({ config: movementConfig.operations, ref: dotRef, activeIndex: dotIndex });
+
+    if (drawLength > -1 && dotIndex !== null) {
+      dotRef.current[dotIndex].style.display = null;
+      dotRef.current[`c-${dotIndex}`].style.display = null;
     }
 
     svgPath.current.style.strokeDashoffset = pathLength - drawLength;
@@ -68,18 +82,54 @@ export default function Steps({
           {
             movementConfig.operations.map((item, index) => {
               if (item.dot) {
-                let fill = "none";
-                if(item.dot.threshold(coloredPathLength)) {
-                  fill = "red"
-                }
                 return (
-                  <circle
-                    key={index}
-                    fill={fill}
-                    cx={item.dot.xCoordinate(attributes.width)}
-                    cy={item.dot.yCoordinate()}
-                    r={item.dot.radius}
-                    />
+                  <Fragment>
+                    {
+                      item.dot.generateDefaultDotUsingAttributes({
+                        width: attributes.width
+                      })
+                    }
+                    <circle
+                      cx={item.dot.xCoordinate(attributes.width)}
+                      cy={item.dot.yCoordinate()}
+                      ref={node => dotRef.current[item.dotIndex] = node}
+                      r={item.dot.radius}
+                      style={{ display: "none" }}
+                      key={index}
+                      fill="none"
+                      ng-attr-stroke="{{config.c1}}"
+                      sng-attr-stroke-width="{{config.width}}"
+                      stroke="#ed6c0db3" strokeWidth="2">
+                      <animate attributeName="r" calcMode="spline"
+                        values="0;20" keyTimes="0;1" dur="1.5"
+                        keySplines="0 0.2 0.8 1"
+                        begin="-0.5s" repeatCount="indefinite" />
+                      <animate attributeName="opacity" calcMode="spline"
+                        values="1;0" keyTimes="0;1" dur="1.5"
+                        keySplines="0.2 0 0.8 1"
+                        begin="-0.5s" repeatCount="indefinite" />
+                    </circle>
+                    <circle
+                      cx={item.dot.xCoordinate(attributes.width)}
+                      cy={item.dot.yCoordinate()}
+                      ref={node => dotRef.current[`c-${item.dotIndex}`] = node}
+                      r={item.dot.radius}
+                      style={{ display: "none" }}
+                      key={index}
+                      fill="none"
+                      ng-attr-stroke="{{config.c1}}"
+                      sng-attr-stroke-width="{{config.width}}"
+                      stroke="#ed6c0db3" strokeWidth="2">
+                      <animate attributeName="r" calcMode="spline"
+                        values="0;20" keyTimes="0;1" dur="1.5"
+                        keySplines="0 0.2 0.8 1"
+                        begin="0s" repeatCount="indefinite" />
+                      <animate attributeName="opacity" calcMode="spline"
+                        values="1;0" keyTimes="0;1" dur="1.5"
+                        keySplines="0.2 0 0.8 1"
+                        begin="0s" repeatCount="indefinite" />
+                    </circle>
+                  </Fragment>
                 );
               } else {
                 return null;
