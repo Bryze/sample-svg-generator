@@ -1,9 +1,7 @@
 import React, { useRef, useState, useEffect, useCallback, Fragment } from "react";
 import "./styles.css";
-import {
-  computePath
-} from "./selectors";
 import { useInView } from "react-intersection-observer";
+import Generator from "./svg-path/generator";
 
 const resetDots = ({ config, ref, activeIndex }) => {
   const totalDots = config.filter((item) => !!item.dot).length;
@@ -27,6 +25,8 @@ export default function Steps({
   const dotRef = useRef({});
   const [pathLength, setPathLength] = useState(0);
   const [containerRef, inView] = useInView({});
+
+  const generator = new Generator();
 
   useEffect(() => {
     if (svgPath.current) {
@@ -142,7 +142,7 @@ export default function Steps({
           stroke="rgba(0,0,0)"
           strokeWidth="1.2"
           d={
-            computePath({
+            generator.path({
               attributes,
               overrides,
               movementConfig
@@ -155,7 +155,7 @@ export default function Steps({
           stroke="red"
           strokeWidth="1.2"
           d={
-            computePath({
+            generator.path({
               attributes,
               overrides,
               movementConfig

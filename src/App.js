@@ -1,9 +1,7 @@
 import React, { useEffect, useState, useRef } from "react";
 import Steps from "./steps";
 import "./styles.css";
-import {
-  ACTION_TYPES
-} from "./selectors";
+import { TYPES } from "./svg-path/actionsTypes";
 
 const SAMPLE_ITEMS = [
   {
@@ -40,7 +38,7 @@ const getDotIndexWhenThresholdReached = (distance) => {
 const MOVEMENT_CONFIG = {
   operations: [
     {
-      action: ACTION_TYPES.MOVE_VERTICAL,
+      action: TYPES.MOVE_DOWN,
       heightIndex: 0,
       dimensions: {
         height: (length) => length - RADIUS_Y
@@ -59,28 +57,28 @@ const MOVEMENT_CONFIG = {
       }
     },
     {
-      action: ACTION_TYPES.TURN_BOTTOM_RIGHT,
+      action: TYPES.TURN_BOTTOM_RIGHT,
       dimensions: {
         rx: RADIUS_X,
         ry: RADIUS_Y
       }
     },
     {
-      action: ACTION_TYPES.MOVE_LEFT,
+      action: TYPES.MOVE_LEFT,
       dimensions: {
         rx: RADIUS_X + 10,
         ry: RADIUS_Y + 10
       }
     },
     {
-      action: ACTION_TYPES.TURN_TOP_LEFT,
+      action: TYPES.TURN_TOP_LEFT,
       dimensions: {
         rx: RADIUS_X,
         ry: RADIUS_Y
       }
     },
     {
-      action: ACTION_TYPES.MOVE_VERTICAL,
+      action: TYPES.MOVE_DOWN,
       heightIndex: 1,
       dimensions: {
         height: (length) => length - (RADIUS_Y * 2)
@@ -99,28 +97,28 @@ const MOVEMENT_CONFIG = {
       }
     },
     {
-      action: ACTION_TYPES.TURN_BOTTOM_LEFT,
+      action: TYPES.TURN_BOTTOM_LEFT,
       dimensions: {
         rx: RADIUS_X,
         ry: RADIUS_Y
       }
     },
     {
-      action: ACTION_TYPES.MOVE_RIGHT,
+      action: TYPES.MOVE_RIGHT,
       dimensions: {
         rx: RADIUS_X + 10,
         ry: RADIUS_Y + 10
       }
     },
     {
-      action: ACTION_TYPES.TURN_TOP_RIGHT,
+      action: TYPES.TURN_TOP_RIGHT,
       dimensions: {
         rx: RADIUS_X,
         ry: RADIUS_Y
       }
     },
     {
-      action: ACTION_TYPES.MOVE_VERTICAL,
+      action: TYPES.MOVE_DOWN,
       heightIndex: 2,
       dimensions: {
         height: (length) => length - (RADIUS_Y * 2)
@@ -139,28 +137,28 @@ const MOVEMENT_CONFIG = {
       }
     },
     {
-      action: ACTION_TYPES.TURN_BOTTOM_RIGHT,
+      action: TYPES.TURN_BOTTOM_RIGHT,
       dimensions: {
         rx: RADIUS_X,
         ry: RADIUS_Y
       }
     },
     {
-      action: ACTION_TYPES.MOVE_LEFT,
+      action: TYPES.MOVE_LEFT,
       dimensions: {
         rx: RADIUS_X + 10,
         ry: RADIUS_Y + 10
       }
     },
     {
-      action: ACTION_TYPES.TURN_TOP_LEFT,
+      action: TYPES.TURN_TOP_LEFT,
       dimensions: {
         rx: RADIUS_X,
         ry: RADIUS_Y
       }
     },
     {
-      action: ACTION_TYPES.MOVE_VERTICAL,
+      action: TYPES.MOVE_DOWN,
       heightIndex: 3,
       dimensions: {
         height: (length) => length - (RADIUS_Y)
